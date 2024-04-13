@@ -11,7 +11,7 @@
 #include <RH_RF69.h>  // Librairie du module radio RFM69
  
 //*********** DEFINITION DES CONSTANTES *************
-#define RF69_FREQ 433.0  // Fréquence d'émission de  424 à 510 MHz
+#define RF69_FREQ 433.0  // Fréquence d'émission de  424 à 510 MHz 
 #define RFM69_INT 3
 #define RFM69_CS 4
 #define RFM69_RST 2
