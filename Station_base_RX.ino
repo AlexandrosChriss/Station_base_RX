@@ -89,7 +89,7 @@ void setup() {
  
 void loop() {
   uint8_t test[] = "TEST TRANSMISSION";
-  rfm69.send(test, sizeof(test)); /*envois*/
+  rfm69.send(test, sizeof(test)); //envois données à la station de base
   rfm69.waitPacketSent();
  
   if (rfm69.available())  // Donnée présente ?
