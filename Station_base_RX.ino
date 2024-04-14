@@ -112,8 +112,9 @@ void loop() {
       }
  
       #ifdef debug_reception
-      Serial.println((char*)buf);
+        Serial.println((char*)buf);
       #endif
+
       if (buf[0] == '#')
       {
         Serial.print("RSSI:");
@@ -122,8 +123,8 @@ void loop() {
         token_start = strtok(buf, "#");
         nb_packet = atoi(token_start);
        
-        for(int i; i < nb_packet+1 ;i++)
-        {         //remplir le tableau pour detecter les erreurs
+        for(int i; i < nb_packet+1 ;i++)  //remplir le tableau pour detecter les erreurs
+        {         
           tableau_reception[i] = String("erreur");
         }
         compteur = 0;
@@ -135,8 +136,8 @@ void loop() {
       if (buf[len - 1] == '$')
       {
         Serial.print("$");
-        len_ = sizeof(tableau_reception);
       }
+    
     } else
     {
       Serial.println("Receive failed");
@@ -146,7 +147,7 @@ void loop() {
   {
  
     if (millis() >= Time_ms + 1500)
-    {  //prends une mesure toute les 10ms
+    {  
       Serial.println(".");
       Time_ms = millis();
     }
