@@ -109,7 +109,7 @@ String rfm69Reception()
       // Assurer qu'il y a des données dans le tampon
       if (len > 0) 
       {
-        Serial.print("donnée dans le tampon RF :");
+        //Serial.print("donnée dans le tampon RF :");
         Serial.println((char*)buf);  
 
         // Convertir le tampon en une chaîne de caractères
@@ -284,6 +284,7 @@ void loop()
   
   if (rfm69.available())  // Donnée présente ?
   {
+    //todo buzzer
     // Récupération et affichage des données
     len = sizeof(buf);
     if (rfm69.recv(buf, &len))
