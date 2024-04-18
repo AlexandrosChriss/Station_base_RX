@@ -22,8 +22,8 @@
 #define VERTICAN_save_on_flash 3
 #define VERTICAN_no_backup_on_flash 4
 #define VERTICAN_backup_on_radio 5
- 
-//************* DEFINITION DES OBJETS ************
+  
+  //************* DEFINITION DES OBJETS ************
 RH_RF69 rfm69(RFM69_CS, RFM69_INT);
  
 //************* DEFINITION DES VARIABLES ************
@@ -39,6 +39,7 @@ char *token_start;
 float floatPart;
 int nb_packet;
 int len_;
+int type_de_reception = 0;
 String donne_de_reception;
 String Radiopacket;
  
@@ -281,6 +282,8 @@ void loop()
     case VERTICAN_save_on_flash: send_radio_msg("save");            break;
     //default: VERTICAN_run:     break;
   }
+
+
   
   if (rfm69.available())  // Donnée présente ?
   {
@@ -290,24 +293,20 @@ void loop()
     if (rfm69.recv(buf, &len))
     {
       if (!len) return;
-      buf[len] = 0;
-      token = strtok(buf, ",");              // Découper la chaîne en fonction de la virgule comme délimiteur
-      integerPart = atoi(token);        // Récupérer le nombre entier avant la virgule
-      token = strtok(NULL, ",");           // Récupérer la partie flottante après la virgule
-      floatPart = atof(token);
-     
-      if (++compteur == integerPart)
-      {
-        Serial.print(floatPart);
-        Serial.print(",");
-      }
- 
+      buf[len] = 0; //on place un 0 dans le dernier element du tableau pour signifier la fin du tableau
       #ifdef debug_reception
         Serial.println((char*)buf);
       #endif
+      
+      if(buf[0] == '?')
+      {
+        send_radio_msg("reception_ok");
+        type_de_reception = 2;
+      }
 
       if (buf[0] == '#')
       {
+        type_de_reception = 1;
         Serial.print("RSSI:");
         Serial.print(rfm69.lastRssi(), DEC);
         Serial.print(" ");
@@ -323,15 +322,39 @@ void loop()
         Serial.print(nb_packet);
         Serial.print(", ");
       }
- 
-      if (buf[len - 1] == '$')
-      {
-        Serial.print("$");
-      }
-    
     } else
     {
       Serial.println("Receive failed");
+    }
+
+
+  switch (type_de_reception){
+    case 2:
+     while(buf[0] != '!')
+      { 
+      Serial.println((char*)buf);
+        if(buf[0] == '$')
+        {
+        Serial.print("\n");
+        }
+      }
+    break;
+    case 1: 
+      token = strtok(buf, ",");              // Découper la chaîne en fonction de la virgule comme délimiteur
+      integerPart = atoi(token);        // Récupérer le nombre entier avant la virgule
+      token = strtok(NULL, ",");           // Récupérer la partie flottante après la virgule
+      floatPart = atof(token);
+     
+      if (++compteur == integerPart)
+        {
+          Serial.print(floatPart);
+          Serial.print(",");
+        }
+      if (buf[len - 1] == '$')
+        {
+          Serial.print("$");
+        }
+      break;
     }
   }
   else
