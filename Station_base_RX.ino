@@ -11,11 +11,11 @@
 #include <RH_RF69.h>  // Librairie du module radio RFM69
  
 //*********** DEFINITION DES CONSTANTES *************
-#define RF69_FREQ 433.0  // Fréquence d'émission de  424 à 510 MHz 
+#define RF69_FREQ 444.4  // Fréquence d'émission de  424 à 510 MHz 
 #define RFM69_INT 3
 #define RFM69_CS 4
 #define RFM69_RST 2
-#define debug_reception
+//#define debug_reception
 #define VERTICAN_run 0
 #define VERTICAN_format_file 1
 #define VERTICAN_extract_file 2
@@ -111,7 +111,7 @@ String rfm69Reception()
       if (len > 0) 
       {
         //Serial.print("donnée dans le tampon RF :");
-        Serial.println((char*)buf);  
+       // Serial.println((char*)buf);  
 
         // Convertir le tampon en une chaîne de caractères
         buf[len] = '\0'; // Assurer que le tampon est terminé par un caractère nul pour être une chaîne valide
@@ -297,10 +297,10 @@ void loop()
       #ifdef debug_reception
         Serial.println((char*)buf);
       #endif
-      
+
       if(buf[0] == '?')
       {
-        send_radio_msg("reception_ok");
+       // send_radio_msg("reception_ok");
         type_de_reception = 2;
       }
 
@@ -322,6 +322,7 @@ void loop()
         Serial.print(nb_packet);
         Serial.print(", ");
       }
+      
     } else
     {
       Serial.println("Receive failed");
@@ -330,13 +331,25 @@ void loop()
 
   switch (type_de_reception){
     case 2:
-     while(buf[0] != '!')
+     if(buf[0] != '!')
       { 
-      Serial.println((char*)buf);
+      Serial.print((char*)buf);
         if(buf[0] == '$')
         {
         Serial.print("\n");
         }
+      }
+      if (strstr(buf, "something") != NULL)
+      {
+        type_de_reception = 1;
+        send_radio_msg("e");
+        delay(1);
+        send_radio_msg("e");
+        delay(1);
+        send_radio_msg("e");
+        delay(1);
+        send_radio_msg("e");
+        delay(1);
       }
     break;
     case 1: 
