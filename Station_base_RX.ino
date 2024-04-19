@@ -11,7 +11,7 @@
 #include <RH_RF69.h>  // Librairie du module radio RFM69
  
 //*********** DEFINITION DES CONSTANTES *************
-#define RF69_FREQ 444.4  // Fréquence d'émission de  424 à 510 MHz 
+#define RF69_FREQ 434.2  // Fréquence d'émission de  424 à 510 MHz 
 #define RFM69_INT 3
 #define RFM69_CS 4
 #define RFM69_RST 2
@@ -293,6 +293,7 @@ void loop()
     if (rfm69.recv(buf, &len))
     {
       if (!len) return;
+      Time_ms = millis();
       buf[len] = 0; //on place un 0 dans le dernier element du tableau pour signifier la fin du tableau
       #ifdef debug_reception
         Serial.println((char*)buf);
@@ -307,7 +308,7 @@ void loop()
       if (buf[0] == '#')
       {
         type_de_reception = 1;
-        Serial.print("RSSI:");
+        Serial.print("\nRSSI:");
         Serial.print(rfm69.lastRssi(), DEC);
         Serial.print(" ");
         token_start = strtok(buf, "#");
@@ -336,7 +337,7 @@ void loop()
       Serial.print((char*)buf);
         if(buf[0] == '$')
         {
-        Serial.print("\n");
+        //Serial.print("\n");
         }
       }
       if (strstr(buf, "something") != NULL)
@@ -357,16 +358,35 @@ void loop()
       integerPart = atoi(token);        // Récupérer le nombre entier avant la virgule
       token = strtok(NULL, ",");           // Récupérer la partie flottante après la virgule
       floatPart = atof(token);
+
+      
+      
+     // Serial.print("\n avt integerPart :"); Serial.print(integerPart);
+      //Serial.print(" compteur :"); Serial.print(compteur);
      
-      if (++compteur == integerPart)
+      if (compteur == integerPart)
         {
           Serial.print(floatPart);
           Serial.print(",");
         }
+      else 
+      {
+        
+        if(compteur!=1)
+        {
+          Serial.print("x");
+          Serial.print(",");
+        }
+        compteur=integerPart;
+        
+      }
+      
       if (buf[len - 1] == '$')
         {
-          Serial.print("$");
+          Serial.print("$\n");
+          compteur=0;
         }
+        compteur++;
       break;
     }
   }
@@ -375,7 +395,7 @@ void loop()
  
     if (millis() >= Time_ms + 1500)
     {  
-      Serial.println(".");
+      Serial.println("_");
       Time_ms = millis();
     }
   }
